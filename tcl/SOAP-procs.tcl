@@ -16,7 +16,7 @@ package require log;                    # tcllib 1.0
 package require uri;                    # tcllib 1.0
 catch {package require uri::urn};       # tcllib 1.2
 # package require SOAP::Utils;            # TclSOAP
-# package require rpcvar;                 # TclSOAP 
+package require rpcvar;                 # TclSOAP 
 package require tdom
 
 # -------------------------------------------------------------------------
