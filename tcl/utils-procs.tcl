@@ -384,7 +384,7 @@ proc ::SOAP::Utils::getDocumentElement {node} {
 
 # -------------------------------------------------------------------------
 
-# Return the value of the specified atribute. First check for an exact match,
+# Return the value of the specified attribute. First check for an exact match,
 # if that fails look for an attribute name without any namespace specification.
 # Result:
 #  Returns the value of the attribute.

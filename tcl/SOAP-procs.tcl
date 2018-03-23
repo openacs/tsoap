@@ -875,7 +875,7 @@ proc ::SOAP::soap_request {procVarName args} {
         }
     }
 
-    # Insert the body element and atributes.
+    # Insert the body element and attributes.
     set bod [$doc createElement "SOAP-ENV:Body"]
     $envx appendChild $bod
     if {$uri == ""} {
