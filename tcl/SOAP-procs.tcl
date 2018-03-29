@@ -805,7 +805,7 @@ proc ::SOAP::soap_request {procVarName args} {
     set soapenv $procvar(version)
     set soapenc $procvar(encoding)
 
-    # Check for options (ie: -header) give up on the fist non-matching arg.
+    # Check for options (ie: -header) give up on the first non-matching arg.
     array set opts {-headers {} -attributes {}}
     while {[string match -* [lindex $args 0]]} {
         switch -glob -- [lindex $args 0] {
