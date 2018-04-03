@@ -269,7 +269,7 @@ proc ::http::geturl_followRedirects {url args} {
         }
         upvar #0 $token state
         array set meta $state(meta)
-        if {![info exist meta(Location)]} {
+        if {![info exists meta(Location)]} {
             return $token
         }
         set url $meta(Location)
