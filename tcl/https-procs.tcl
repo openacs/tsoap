@@ -111,7 +111,7 @@ proc ::SOAP::Transport::https::configure {args} {
 }
 
 #  Configure any TLS sepcific parameters (e.g. certificate location)
-#  Pass any values received to the "::tls::init" proceure
+#  Pass any values received to the "::tls::init" procedure
 #  --Added by David Bleicher 26/03/02
 proc ::SOAP::Transport::https::tlsConfigure {args} {
     set validopts [list -cafile -cadir -certfile -cipher -command -keyfile \
