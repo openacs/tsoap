@@ -83,7 +83,7 @@ proc ::SOAP::transportHook {procVarName cmdname} {
         set URL(scheme) "$a(scheme):$a(nid)"
     }
     set cmd [schemeloc $URL(scheme)]::$cmdname
-    if {[info command $cmd] == {}} {
+    if {[info commands $cmd] == {}} {
         set cmd {}
     }
     return $cmd
@@ -230,7 +230,7 @@ proc ::SOAP::configure { procName args } {
     if { $procName == "-transport" } {
         set scheme [lindex $args 0]
         set config "[schemeloc $scheme]::configure"
-        if {[info command $config] != {}} {
+        if {[info commands $config] != {}} {
             return [eval $config [lrange $args 1 end]]
         } else {
             return -code error "invalid transport:\
@@ -304,7 +304,7 @@ proc ::SOAP::configure { procName args } {
                 # and then call this once with all the remaining args.
                 # Still - this will work fine.
                 if {[info exists transportHook] 
-                    && [info command $transportHook] != {}} {
+                    && [info commands $transportHook] != {}} {
                     if {[catch {eval $transportHook $procVarName \
                                     [list $opt] [list $value]}]} {
                         return -code error "unknown option \"$opt\":\
@@ -326,7 +326,7 @@ proc ::SOAP::configure { procName args } {
     # scheme registered by SOAP::register.
     if { $procvar(transport) == {} } {
         set xferProc "[schemeloc $scheme]::xfer"
-        if {[info command $xferProc] != {}} {
+        if {[info commands $xferProc] != {}} {
             set procvar(transport) $xferProc
         } else {
             return -code error "invalid transport:\
@@ -426,7 +426,7 @@ proc ::SOAP::create { args } {
         
         # Call any transport defined construction proc
         set createHook "[schemeloc $scheme]::method:create"
-        if {[info command $createHook] != {}} {
+        if {[info commands $createHook] != {}} {
             eval $createHook $varName $args
         }
     }
