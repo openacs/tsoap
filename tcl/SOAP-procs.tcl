@@ -16,7 +16,7 @@ package require log;                    # tcllib 1.0
 package require uri;                    # tcllib 1.0
 catch {package require uri::urn};       # tcllib 1.2
 # package require SOAP::Utils;            # TclSOAP
-package require rpcvar;                 # TclSOAP 
+package require rpcvar;                 # TclSOAP
 package require tdom
 
 # -------------------------------------------------------------------------
@@ -38,8 +38,8 @@ namespace eval ::SOAP {
 # -------------------------------------------------------------------------
 
 # Description:
-#  Register the namespace for handling SOAP methods using 'scheme' as a 
-#  transport. See the http.tcl and smtp.tcl files for examples of how 
+#  Register the namespace for handling SOAP methods using 'scheme' as a
+#  transport. See the http.tcl and smtp.tcl files for examples of how
 #  to plug in a new scheme.
 #  A SOAP transport package requires an 'xfer' method for performing the
 #  SOAP method call and a 'configure' method for setting any transport
@@ -77,7 +77,7 @@ proc ::SOAP::schemeloc {scheme} {
 #
 proc ::SOAP::transportHook {procVarName cmdname} {
     upvar $procVarName procvar
-    
+
     array set URL [uri::split $procvar(proxy)]
     if {$URL(scheme) == "urn"} {
         set URL(scheme) "$a(scheme):$a(nid)"
@@ -96,7 +96,7 @@ proc ::SOAP::transportHook {procVarName cmdname} {
 # Parameters:
 #   name - the name of a Tcl entity, or list of command and arguments
 # Result:
-#   Fully qualified namespace path for the named entity. If the name 
+#   Fully qualified namespace path for the named entity. If the name
 #   parameter is a list the the first element is namespace qualified
 #   and the remainder of the list is unchanged.
 #
@@ -111,8 +111,8 @@ proc ::SOAP::qualifyNamespace {name} {
 # -------------------------------------------------------------------------
 
 # Description:
-#  An interal procedure to mangle and SOAP method name and it's namespace
-#  and generate a name for use as a specific SOAP variable. This ensures 
+#  An internal procedure to mangle a SOAP method name and its namespace
+#  and generate a name for use as a specific SOAP variable. This ensures
 #  that similarly named methods in different namespaces do not conflict
 #  within the SOAP package.
 # Parameters:
@@ -296,14 +296,14 @@ proc ::SOAP::configure { procName args } {
             -parse*    { set procvar(parseProc) [qualifyNamespace $value] }
             -post*     { set procvar(postProc) [qualifyNamespace $value] }
             -com*      { set procvar(command) [qualifyNamespace $value] }
-            -err*      { 
-                set procvar(errorCommand) [qualifyNamespace $value] 
+            -err*      {
+                set procvar(errorCommand) [qualifyNamespace $value]
             }
             default {
                 # might be better to delete the args as we process them
                 # and then call this once with all the remaining args.
                 # Still - this will work fine.
-                if {[info exists transportHook] 
+                if {[info exists transportHook]
                     && [info commands $transportHook] != {}} {
                     if {[catch {eval $transportHook $procVarName \
                                     [list $opt] [list $value]}]} {
@@ -318,7 +318,7 @@ proc ::SOAP::configure { procName args } {
         }
     }
 
-    if { $procvar(name) == {} } { 
+    if { $procvar(name) == {} } {
         set procvar(name) $procName
     }
 
@@ -332,8 +332,8 @@ proc ::SOAP::configure { procName args } {
             return -code error "invalid transport:\
                 \"$scheme\" is improperly registered"
         }
-    } 
-    
+    }
+
     # The default version is SOAP 1.1
     if { $procvar(version) == {} } {
         set procvar(version) SOAP1.1
@@ -341,10 +341,10 @@ proc ::SOAP::configure { procName args } {
     # Canonicalize the SOAP version URI
     switch -glob -- $procvar(version) {
         SOAP1.1 - 1.1 {
-            set procvar(version) "http://schemas.xmlsoap.org/soap/envelope/" 
+            set procvar(version) "http://schemas.xmlsoap.org/soap/envelope/"
         }
         SOAP1.2 - 1.2 {
-            set procvar(version) "http://www.w3.org/2001/06/soap-envelope" 
+            set procvar(version) "http://www.w3.org/2001/06/soap-envelope"
         }
     }
 
@@ -357,14 +357,14 @@ proc ::SOAP::configure { procName args } {
             set procvar(encoding) "http://schemas.xmlsoap.org/soap/encoding/"
         }
         SOAP1.2 - 1.2 {
-            set procvar(encoding) "http://www.w3.org/2001/06/soap-encoding" 
+            set procvar(encoding) "http://www.w3.org/2001/06/soap-encoding"
         }
     }
 
     # Select the default parser unless one is specified
     if { $procvar(parseProc) == {} } {
         set procvar(parseProc) [namespace current]::parse_soap_response
-    } 
+    }
 
     # If no request wrapper is set, use the default SOAP wrap proc.
     if { $procvar(wrapProc) == {} } {
@@ -423,7 +423,7 @@ proc ::SOAP::create { args } {
         foreach opt [set $transportOptions] {
             array set $varName [list $opt {}]
         }
-        
+
         # Call any transport defined construction proc
         set createHook "[schemeloc $scheme]::method:create"
         if {[info commands $createHook] != {}} {
@@ -662,7 +662,7 @@ proc ::SOAP::proxyconfig {} {
     pack $f2 -side bottom -fill x
     pack $m  -side top -fill x -expand 1
     pack $f1 -side top -anchor n -fill both -expand 1
-    
+
     #bind .tx <Enter> "$f2.b invoke"
 
     tkwait window .tx
@@ -685,7 +685,7 @@ proc ::SOAP::proxyconfig {} {
 #   detail      - list of {detailName detailInfo}
 # Result:
 #   returns the XML text of the SOAP Fault packet.
-# 
+#
 proc ::SOAP::fault {faultcode faultstring {detail {}}} {
     set doc [dom createDocument "SOAP-ENV:Envelope"]
     set bod [reply_envelope $doc]
@@ -704,14 +704,14 @@ proc ::SOAP::fault {faultcode faultstring {detail {}}} {
         set dtl  [$doc createElement "e:errorInfo"]
         $dtl0 appendChild $dtl
         $dtl setAttribute "xmlns:e" "urn:TclSOAP-ErrorInfo"
-        
+
         foreach {detailName detailInfo} $detail {
             set err [$doc createElement $detailName]
             $dtl appendChild $err
             $err appendChild [$doc createTextNode $detailInfo]
         }
     }
-    
+
     # serialize the DOM document and return the XML text
     regsub "<!DOCTYPE\[^>\]*>\n" [$doc asXML] {} r
     $doc delete
@@ -933,7 +933,7 @@ proc ::SOAP::xmlrpc_request {procVarName args} {
     set procName [lindex [split $procVarName {_}] end]
     set params $procvar(params)
     set name   $procvar(name)
-    
+
     if { [llength $args] != [expr { [llength $params] / 2 } ]} {
         set msg "wrong # args: should be \"$procName"
         foreach { id type } $params {
@@ -942,18 +942,18 @@ proc ::SOAP::xmlrpc_request {procVarName args} {
         append msg "\""
         return -code error $msg
     }
-    
+
     set doc [dom createDocument "methodCall"]
     set d_root [$doc documentElement]
     set d_meth [$doc createElement "methodName"]
     $d_root appendChild $d_meth
     $d_meth appendChild [$doc createTextNode $name]
-    
+
     if { [llength $params] != 0 } {
         set d_params [$doc createElement "params"]
         $d_root appendChild $d_params
     }
-    
+
     set param_no 0
     foreach {key type} $params {
         set val [lindex $args $param_no]
@@ -976,7 +976,7 @@ proc ::SOAP::xmlrpc_request {procVarName args} {
 # -------------------------------------------------------------------------
 
 # Description:
-#   Parse a SOAP response payload. Check for Fault response otherwise 
+#   Parse a SOAP response payload. Check for Fault response otherwise
 #   extract the value data.
 # Parameters:
 #   procVarName  - the name of the SOAP method configuration variable
@@ -1024,7 +1024,7 @@ proc ::SOAP::parse_soap_response { procVarName xml } {
     } else {
         set procvar(headers) {}
     }
-    
+
     set result {}
 
     if {[info exists procvar(name)]} {
@@ -1087,7 +1087,7 @@ proc ::SOAP::parse_xmlrpc_response { procVarName xml } {
             -errorinfo $err(faultString) \
             "Received XML-RPC Error"
     }
-    
+
     # Recurse over each params/param/value
     set n_params 0
     foreach valueNode [selectNode $doc \
@@ -1137,7 +1137,7 @@ proc ::SOAP::parse_xmlrpc_request { xml } {
     set paramsNode [selectNode $doc "/methodCall/params"]
     set paramValues {}
     if {$paramsNode != {}} {
-	set paramValues [decomposeXMLRPC $paramsNode]
+        set paramValues [decomposeXMLRPC $paramsNode]
     }
     if {[llength $paramValues] == 1} {
         set paramValues [lindex $paramValues 0]
@@ -1232,7 +1232,7 @@ proc ::SOAP::insert_value {node value} {
     if {$headers != {}} {
         insert_headers $node $headers
     }
-    
+
     # If the rpcvar namespace is a URI then assign it a tag and ensure we
     # have our colon only when required.
     if {$typexmlns != {} && [regexp : $typexmlns]} {
@@ -1248,7 +1248,7 @@ proc ::SOAP::insert_value {node value} {
         }
     }
 
-    if {[string match {*()} $typeinfo] || [string match {*()} $type] 
+    if {[string match {*()} $typeinfo] || [string match {*()} $type]
         || [string match array $type]} {
         # array type: arrays are indicated by one or more () suffixes or
         # the word 'array' (depreciated)
@@ -1264,16 +1264,16 @@ proc ::SOAP::insert_value {node value} {
             set dimensions [regexp -all -- {\(\)} $typeinfo]
             set itemtype [string trimright $typeinfo ()]
         }
-        
+
         # Look up the typedef info of the item type
         set itemxmlns [typedef -namespace $itemtype]
         if {$itemxmlns != {} && [regexp : $itemxmlns]} {
             $node setAttribute "xmlns:i" $itemxmlns
             set itemxmlns i
         }
-        
+
         # Currently we do not support non-0 offsets into the array.
-        # This is because I don;t know how I should present this to the
+        # This is because I don't know how I should present this to the
         # user. It's got to be a dynamic attribute on the value.
         $node setAttribute "xmlns:SOAP-ENC" "http://schemas.xmlsoap.org/soap/encoding/"
         $node setAttribute "xsi:type" "SOAP-ENC:Array"
