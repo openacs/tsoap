@@ -48,7 +48,7 @@ proc ::SOAP::Utils::selectNode2 {node path} {
 proc ::SOAP::Utils::selectNode {doc path} {
     set path [split [string trimleft $path {/}] {/}]
     set node [$doc documentElement]
-    set log [list]
+    set log {}
     
     if {[lindex [SOAP::xpath::xmlnsSplit [$node nodeName]] 1] != [lindex $path 0]} {
         return ""
